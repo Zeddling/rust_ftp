@@ -24,6 +24,9 @@ pub struct Server {
 }
 
 impl Server { 
+    /**
+     * Hanndles file receiving and saving from each client
+     */
     fn handle_connection(stream: TcpStream) {
         let reader = BufReader::new(stream);
 
@@ -32,7 +35,7 @@ impl Server {
             Err(e) => panic!("Couldn't read stream: {}", e)
         };
 
-        //  write file
+        //  write file to output path
         let mut path = String::from("output/");
         path.push_str(info.name.as_ref());
         match std::fs::write(path, info.file_bytes) {
@@ -42,6 +45,9 @@ impl Server {
         println!("Got {} file", info.name);
     }
 
+    /**
+     * Starts server and listens for connections
+     */
     pub fn run(&self) {
         let url = format!(
             "{}:{}",
@@ -72,7 +78,10 @@ impl Server {
         drop(listener);
     }
 }
-
+/**
+ * Iterates between ports 8000 - 9000 to search for
+ * a free port.
+ */
 fn find_port() -> Option<u16> {
     (8000..9000).
         find(|port| {
@@ -83,6 +92,9 @@ fn find_port() -> Option<u16> {
         })
 }
 
+/**
+ * Creates a new Server instance
+ */
 pub fn new() -> Server {
     let port = find_port().expect("No available port");
 

@@ -29,11 +29,14 @@ pub fn run(server: String) {
     println!("Terminating...")
 }
 
+/**
+ * Gets path from user and and sends to the server
+ */
 fn send_file(stream: &mut TcpStream) {
-    println!("Beginning ops");
-    //  Get path of the file from user
+    //  Prompt for path of the file from user
     println!("Enter path of the file you wish to send: ");
     
+    //  Get input
     let mut input = String::new();
     std::io::stdin().read_line(&mut input).unwrap();
     println!("Sending {} to server", input);
@@ -57,9 +60,11 @@ fn send_file(stream: &mut TcpStream) {
             panic!("Could not open file with error: {}", e)
         }
     };
+
+    //  Create writer for safe writes to the server
     let writer = BufWriter::new(stream.try_clone().unwrap());
 
-    //  Serialize
+    //  Serialize and send to the server
     match serde_json::to_writer(writer, &file) {
         Ok(_) => println!("File sent successfully!"),
         Err(e) => panic!("Error while sending file: {}", e)
